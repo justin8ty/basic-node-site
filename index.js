@@ -1,32 +1,27 @@
-const http = require("http");
-const fs = require("fs");
+const express = require("express");
+const path = require("path");
 
-const server = http.createServer((req, res) => {
-  const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
-  let filePath = "";
+const app = express();
+const PORT = 8080;
 
-  if (parsedUrl.pathname === "/") {
-    filePath = "index.html";
-  } else if (parsedUrl.pathname === "/about") {
-    filePath = "about.html";
-  } else if (parsedUrl.pathname === "/contact-me") {
-    filePath = "contact-me.html";
-  } else {
-    filePath = "404.html";
-  }
+app.use(express.static(__dirname));
 
-  fs.readFile(filePath, (err, content) => {
-    if (err) {
-      res.writeHead(500, { "Content-Type": "text/plain" });
-      res.end("Server Error");
-    } else {
-      res.writeHead(200, { "Content-Type": "text/html" });
-      res.end(content, "utf8");
-    }
-  });
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
-const PORT = 8080;
-server.listen(PORT, () => {
+app.get("/about", (req, res) => {
+  res.sendFile(path.join(__dirname, "about.html"));
+});
+
+app.get("/contact-me", (req, res) => {
+  res.sendFile(path.join(__dirname, "contact-me.html"));
+});
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "404.html"));
+});
+
+app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
