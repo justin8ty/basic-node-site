@@ -1,9 +1,8 @@
 const http = require("http");
 const fs = require("fs");
-const url = require("url");
 
 const server = http.createServer((req, res) => {
-  const parsedUrl = url.parse(req.url);
+  const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
   let filePath = "";
 
   if (parsedUrl.pathname === "/") {
@@ -27,4 +26,7 @@ const server = http.createServer((req, res) => {
   });
 });
 
-server.listen(8000);
+const PORT = 8080;
+server.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
+});
